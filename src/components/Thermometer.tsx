@@ -1,8 +1,8 @@
-import { motion } from "framer-motion";
+import { motion } from "motion/react";
 import type React from "react";
 import { useEffect, useState } from "react";
 import styled, { css, keyframes } from "styled-components";
-import { levels, maxbullshitUnits, unitsToLevel } from "../utils/levels";
+import { LevelName, getLevelFromUnits, levels, maxbullshitUnits } from "../services/levels";
 
 type ThermometerProps = {
   bullshitUnits: number;
@@ -45,28 +45,24 @@ const ThermometerBody = styled.div<{ color: string }>`
   }
 `;
 
-const Mercury = styled(motion.div)<{ level: number }>`
+const Mercury = styled(motion.div)<{ height: number }>`
   position: absolute;
   bottom: 0;
   width: 100%;
-  height: ${({ level }) => level}%;
+  height: ${({ height }) => height}%;
   background: red;
   transition: height 0.5s ease-out;
 `;
 
-const WarningText = styled.div<{ units: number }>`
+const WarningText = styled.div<{ units: number; level: LevelName }>`
   font-size: 20px;
   color: ${({ units }) =>
-    units >= levels.critical.thresholdBullshitUnits
-      ? "red"
-      : units >= levels.warning.thresholdBullshitUnits
-        ? "orange"
-        : "green"};
+    units >= levels.critical.thresholdUnits ? "red" : units >= levels.warning.thresholdUnits ? "orange" : "green"};
   font-weight: bold;
   margin-top: 10px;
   text-align: center;
 
-  ${({ units }) => units >= maxbullshitUnits && css`animation: ${pulse} 0.5s infinite;`}
+  ${({ level }) => level === LevelName.critical && css`animation: ${pulse} 0.5s infinite;`}
 
   @media (min-width: 768px) {
     font-size: 24px;
@@ -94,36 +90,31 @@ const Alarm = styled.div<{ show: string }>`
 `;
 
 const Thermometer: React.FC<ThermometerProps> = ({ bullshitUnits }) => {
-  const [, setBullshitUnits] = useState(0);
-  const [warning, setWarning] = useState("");
-  const isAlarmOn = bullshitUnits >= levels.critical.thresholdBullshitUnits;
+  const [, setBullshitUnits] = useState(bullshitUnits);
+  const [level, setLevel] = useState(LevelName.normal);
 
   useEffect(() => {
-    setBullshitUnits(Math.min((bullshitUnits / 100) * 100, maxbullshitUnits));
-    const newLevel = unitsToLevel(bullshitUnits);
-    setWarning(levels[newLevel].message);
+    setBullshitUnits(bullshitUnits);
+    setLevel(getLevelFromUnits(bullshitUnits));
   }, [bullshitUnits]);
+
+  const levelData = levels[level];
+  const isAlarmOn = levelData.name === LevelName.critical;
+  const bullshitPercentage = Math.ceil((bullshitUnits / maxbullshitUnits) * 100);
 
   return (
     <Container>
-      <ThermometerBody
-        color={
-          bullshitUnits >= levels.caution.thresholdBullshitUnits
-            ? bullshitUnits >= maxbullshitUnits
-              ? "darkred"
-              : "orange"
-            : "lightblue"
-        }
-      >
+      <ThermometerBody color={levelData.color}>
         <Mercury
-          level={bullshitUnits}
+          height={bullshitUnits}
           initial={{ height: 0 }}
-          animate={{ height: `${Math.ceil((bullshitUnits / maxbullshitUnits) * 100)}%` }}
+          animate={{ height: `${bullshitPercentage}%` }}
           transition={{ duration: 1 }}
         />
       </ThermometerBody>
-      <WarningText units={bullshitUnits}>{warning}</WarningText>
-      const is
+      <WarningText level={levelData.name} units={bullshitUnits}>
+        {levelData.message}
+      </WarningText>
       <Alarm show={isAlarmOn.toString()}>🚨 BULLSHIT ALARM ACTIVATED! 🚨</Alarm>
     </Container>
   );

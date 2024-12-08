@@ -1,9 +1,12 @@
+import { maxbullshitUnits } from "./levels";
+
 // Check if SpeechRecognition is supported
 const supportedSpeechRecognition = window.webkitSpeechRecognition !== undefined;
 
 const subscribedCallbacks: ((bullshitUnits: number) => void)[] = [];
 
 let currentBullshitUnits = 100;
+const unitsIncrement = 1000;
 
 export function startTracking() {
   console.log("Starting speech recognition...");
@@ -14,7 +17,7 @@ export function startTracking() {
   }
   // Word list to track and their counters
   const wordsToTrack: { [key: string]: number } = {
-    OKR: 0,
+    okrs: 0,
     agile: 0,
     collaboration: 0,
     stakeholders: 0,
@@ -32,18 +35,22 @@ export function startTracking() {
 
   // Event: On receiving results
   recognition.onresult = (event: SpeechRecognitionEvent) => {
-    console.log("Speech recognition result received.");
     for (let i = 0; i < event.results.length; i++) {
       const transcript = event.results[i][0].transcript.trim().toLowerCase();
       console.log(`Heard: ${transcript}`);
+      const transcriptWords = transcript.split(" ");
 
-      // Check if the word is in our list and increment counter
-      if (wordsToTrack[transcript] !== undefined) {
-        wordsToTrack[transcript]++;
-        console.log(`Word detected: "${transcript}". Count: ${wordsToTrack[transcript]}`);
-        currentBullshitUnits += 100;
-        notifySubscribers();
+      for (const word of transcriptWords) {
+        // Check if the word is in our list and increment counter
+        if (wordsToTrack[word] !== undefined) {
+          wordsToTrack[word]++;
+          console.log(`Word detected: "${word}". Count: ${wordsToTrack[word]}`);
+          if (currentBullshitUnits < maxbullshitUnits - unitsIncrement) {
+            currentBullshitUnits += unitsIncrement;
+          }
+        }
       }
+      notifySubscribers();
     }
   };
 
