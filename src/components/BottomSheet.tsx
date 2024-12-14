@@ -40,7 +40,7 @@ const DragHandle = styled.div`
   background: #ccc;
   border-radius: 5px;
   position: absolute;
-  top: -20px;
+  top: -2.5rem;
   left: 50%;
   transform: translateX(-50%);
   cursor: grab;
@@ -131,9 +131,42 @@ const BottomSheet: React.FC<BottomSheetProps> = ({ onClose, children }) => {
     document.removeEventListener("mouseup", handleMouseUp);
   };
 
+  // Add touch event handlers
+  const handleTouchStart = (e: React.TouchEvent) => {
+    //Convert to MouseEvent
+    const mouseEvent = {
+      clientX: e.touches[0].clientX,
+      clientY: e.touches[0].clientY,
+    };
+    handleMouseDown(mouseEvent as unknown as React.MouseEvent);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    //Convert to MouseEvent
+    const mouseEvent = {
+      clientX: e.touches[0].clientX,
+      clientY: e.touches[0].clientY,
+    };
+    handleMouseMove(mouseEvent as MouseEvent);
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    //Convert to MouseEvent
+    const mouseEvent = {
+      clientX: e.touches[0].clientX,
+      clientY: e.touches[0].clientY,
+    };
+    handleMouseMove(mouseEvent as MouseEvent);
+  };
+
   return (
     <SheetContainer translatey={translateY}>
-      <DragHandle onMouseDown={handleMouseDown} />
+      <DragHandle
+        onMouseDown={handleMouseDown}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+      />
       <CloseButton onClick={onCloseButtonClicked}>&times;</CloseButton>
       <SheetContent>{children}</SheetContent>
     </SheetContainer>

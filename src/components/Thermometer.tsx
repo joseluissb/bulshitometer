@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import type React from "react";
 import { useEffect, useState } from "react";
 import styled, { css, keyframes } from "styled-components";
+import icon from "../assets/icon-small.png";
 import { LevelName, getLevelFromUnits, levels, maxbullshitUnits } from "../services/levels";
 
 type ThermometerProps = {
@@ -26,23 +27,24 @@ const Container = styled.div`
 `;
 
 const ThermometerBody = styled.div<{ color: string }>`
-  width: 50px;
-  height: 300px;
+  width: 30px;
+  height: 200px;
   background: ${({ color }) => color};
   border-radius: 25px;
   position: relative;
   overflow: hidden;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
   transition: background-color 1s ease;
+  margin-left: 20px;
 
   @media (min-width: 768px) {
-    width: 70px;
-    height: 400px;
+    width: 40px;
+    height: 250px;
   }
 
   @media (min-width: 1024px) {
-    width: 100px;
-    height: 500px;
+    width: 60px;
+    height: 300px;
   }
 `;
 
@@ -106,14 +108,17 @@ const Thermometer: React.FC<ThermometerProps> = ({ bullshitUnits }) => {
 
   return (
     <Container>
-      <ThermometerBody color={levelData.color}>
-        <Mercury
-          height={bullshitUnits}
-          initial={{ height: 0 }}
-          animate={{ height: `${bullshitPercentage}%` }}
-          transition={{ duration: 1 }}
-        />
-      </ThermometerBody>
+      <div style={{ display: "flex", alignItems: "center" }}>
+        <img src={icon} alt="icon" />
+        <ThermometerBody color={levelData.color}>
+          <Mercury
+            height={bullshitUnits}
+            initial={{ height: 0 }}
+            animate={{ height: `${bullshitPercentage}%` }}
+            transition={{ duration: 1 }}
+          />
+        </ThermometerBody>
+      </div>
       <WarningText level={levelData.name} units={bullshitUnits}>
         {levelData.message}
       </WarningText>

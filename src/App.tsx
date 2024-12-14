@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import styled from "styled-components";
 import BottomSheet from "./components/BottomSheet";
 import Thermometer from "./components/Thermometer";
+import WordList from "./components/WordList";
 import { startTracking, subscribeToBullshitUnits } from "./services/detector";
 
 const AppContainer = styled.div`
@@ -24,23 +25,15 @@ const AppContainer = styled.div`
   }
 `;
 
-const InputContainer = styled.div`
+const BottomSheetContainer = styled.div`
   margin-top: 20px;
   display: flex;
   flex-direction: column;
   align-items: center;
-
-  @media (min-width: 768px) {
-    margin-top: 30px;
-  }
-
-  @media (min-width: 1024px) {
-    margin-top: 40px;
-  }
 `;
 
 const Slider = styled.input`
-  margin: 10px 0;
+  margin: 10px 0 3rem 0;
   width: 100%;
 
   @media (min-width: 768px) {
@@ -54,22 +47,28 @@ const Slider = styled.input`
 
 const App: React.FC = () => {
   const [bullshitUnits, setBullshitUnits] = useState(100);
+  const [words, setWords] = useState<string[]>(["agile", "collaboration", "stakeholders", "clients", "efficiency"]);
 
-  // Subscribe to updates
   useEffect(() => {
-    startTracking();
     subscribeToBullshitUnits((bullshitUnits: number) => {
       setBullshitUnits(bullshitUnits);
     });
   }, []);
 
+  // Subscribe to words updates
+  useEffect(() => {
+    console.log("Words updated:", words);
+    startTracking(words);
+  }, [words]);
+
   return (
     <AppContainer>
-      <h1>Bulshitometer</h1>
+      <h1>Bullshitometer</h1>
       <Thermometer bullshitUnits={bullshitUnits} />
       <BottomSheet onClose={() => {}}>
-        <InputContainer>
-          <label htmlFor="bullshit-slider">Set bulshit units manually: {bullshitUnits}</label>
+        <BottomSheetContainer>
+          <WordList words={words} setWords={setWords} />
+          <label htmlFor="bullshit-slider">Set bullshit units manually: {bullshitUnits}</label>
           <Slider
             id="bullshit-slider"
             type="range"
@@ -78,7 +77,7 @@ const App: React.FC = () => {
             value={bullshitUnits}
             onChange={(e) => setBullshitUnits(Number(e.target.value))}
           />
-        </InputContainer>
+        </BottomSheetContainer>
       </BottomSheet>
     </AppContainer>
   );
