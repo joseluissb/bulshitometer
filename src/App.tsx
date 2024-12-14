@@ -1,6 +1,7 @@
 import type React from "react";
 import { useEffect, useState } from "react";
 import styled from "styled-components";
+import BottomSheet from "./components/BottomSheet";
 import Thermometer from "./components/Thermometer";
 import { startTracking, subscribeToBullshitUnits } from "./services/detector";
 
@@ -40,7 +41,7 @@ const InputContainer = styled.div`
 
 const Slider = styled.input`
   margin: 10px 0;
-  width: 300px;
+  width: 100%;
 
   @media (min-width: 768px) {
     width: 400px;
@@ -66,17 +67,20 @@ const App: React.FC = () => {
     <AppContainer>
       <h1>Bulshitometer</h1>
       <Thermometer bullshitUnits={bullshitUnits} />
-      <InputContainer>
-        <label htmlFor="bullshit-slider">Set bulshit units manually: {bullshitUnits}</label>
-        <Slider
-          id="bullshit-slider"
-          type="range"
-          min="0"
-          max="10000"
-          value={bullshitUnits}
-          onChange={(e) => setBullshitUnits(Number(e.target.value))}
-        />
-      </InputContainer>
+      <BottomSheet onClose={() => {}}>
+        <InputContainer>
+          <h2>Bottom Sheet Content</h2>
+          <label htmlFor="bullshit-slider">Set bulshit units manually: {bullshitUnits}</label>
+          <Slider
+            id="bullshit-slider"
+            type="range"
+            min="0"
+            max="10000"
+            value={bullshitUnits}
+            onChange={(e) => setBullshitUnits(Number(e.target.value))}
+          />
+        </InputContainer>
+      </BottomSheet>
     </AppContainer>
   );
 };

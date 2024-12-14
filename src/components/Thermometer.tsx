@@ -1,4 +1,4 @@
-import { motion } from "motion/react";
+import { motion } from "framer-motion";
 import type React from "react";
 import { useEffect, useState } from "react";
 import styled, { css, keyframes } from "styled-components";
