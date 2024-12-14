@@ -33,6 +33,7 @@ const ThermometerBody = styled.div<{ color: string }>`
   position: relative;
   overflow: hidden;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  transition: background-color 1s ease;
 
   @media (min-width: 768px) {
     width: 70px;
@@ -100,7 +101,8 @@ const Thermometer: React.FC<ThermometerProps> = ({ bullshitUnits }) => {
 
   const levelData = levels[level];
   const isAlarmOn = levelData.name === LevelName.critical;
-  const bullshitPercentage = Math.ceil((bullshitUnits / maxbullshitUnits) * 100);
+  // Calculate percentage of the thermometer filled with bullshit, max is 100%
+  const bullshitPercentage = Math.min(Math.ceil((bullshitUnits / maxbullshitUnits) * 100), 100);
 
   return (
     <Container>

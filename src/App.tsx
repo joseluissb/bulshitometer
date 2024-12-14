@@ -69,7 +69,6 @@ const App: React.FC = () => {
       <Thermometer bullshitUnits={bullshitUnits} />
       <BottomSheet onClose={() => {}}>
         <InputContainer>
-          <h2>Bottom Sheet Content</h2>
           <label htmlFor="bullshit-slider">Set bulshit units manually: {bullshitUnits}</label>
           <Slider
             id="bullshit-slider"

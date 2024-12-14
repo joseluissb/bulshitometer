@@ -17,7 +17,6 @@ export function startTracking() {
   }
   // Word list to track and their counters
   const wordsToTrack: { [key: string]: number } = {
-    okrs: 0,
     agile: 0,
     collaboration: 0,
     stakeholders: 0,
@@ -45,8 +44,10 @@ export function startTracking() {
         if (wordsToTrack[word] !== undefined) {
           wordsToTrack[word]++;
           console.log(`Word detected: "${word}". Count: ${wordsToTrack[word]}`);
-          if (currentBullshitUnits < maxbullshitUnits - unitsIncrement) {
+          if (currentBullshitUnits + unitsIncrement < maxbullshitUnits) {
             currentBullshitUnits += unitsIncrement;
+          } else {
+            currentBullshitUnits = maxbullshitUnits;
           }
         }
       }

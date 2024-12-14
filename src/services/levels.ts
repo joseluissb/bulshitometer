@@ -31,7 +31,7 @@ export const levels: Record<LevelName, LevelData> = {
     name: LevelName.warning,
     thresholdUnits: maxbullshitUnits * 0.75,
     message: "Warning: Very High bullshit level",
-    color: "red",
+    color: "darkred",
   },
   critical: {
     name: LevelName.critical,
